@@ -15,9 +15,9 @@ I encourage forks, modifications and improvements!
 
 
 #SingleInstance,force
-;Menu,Tray,NoStandard
+Menu,Tray,NoStandard
 Menu,Tray,NoIcon
-;Menu,Tray,Add,% "Exit",% "ExitScript"
+Menu,Tray,Add,% "Exit",% "ExitScript"
 
 
 ; CHECK FOR AND/OR CREATE .INI:
