@@ -145,6 +145,11 @@ if (firstRun) {
 
 ; ---
 
+; we will check for changes to ini contents periodically
+iniFile1 := FileOpen(A_ScriptDir "\RadeonClockEnforcer.ini","r")
+iniFile1.RawRead(rawfile1,12288)
+iniFile1.Close()
+
 if (startup || firstRun) {
 	if (!FileExist(A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\RadeonClockEnforcer.lnk")) {
 		FileCreateShortcut,% A_ScriptDir "\RadeonClockEnforcer.exe",% A_AppData "\Microsoft\Windows\Start Menu\Programs\Startup\RadeonClockEnforcer.lnk"
@@ -168,6 +173,8 @@ if (!FileExist(ODNTPath "\OverdriveNTool.exe")) {
 ; ---------------------------------------
 ; main loop
 
+sleep,2000 ; safety buffer in case i'm reloading the script
+
 ; profile0 = default, profile1 = max
 ErrorLevel := 0
 runwait,% "OverdriveNTool.exe -p0" profile0,% ODNTPath,UseErrorLevel
@@ -175,7 +182,7 @@ if (ErrorLevel != 0) {
 	msgbox,% "Error while calling """ ODNTPath "\OverdriveNTool.exe -p0" profile0 """`n`nWIN32 error code: " A_LastError "`n`nExiting"
 	exitapp
 }
-; soundplay,*16 ; FOR TESTING
+soundplay,*16 ; FOR TESTING
 
 
 profileTimestamp := A_TickCount
@@ -188,17 +195,26 @@ OnExit,ExitSub
 
 loop {
 	
-	profileNext := SetProfile()
+	; check ini for changes
+	iniFile2 := FileOpen(A_ScriptDir "\RadeonClockEnforcer.ini","r")
+	iniFile2.RawRead(rawfile2,12288)
+	iniFile2.Close()
+	if (rawfile1 != rawfile2) {
+		reload ; ini has changed, adapt changes
+	}
+	
+	
+	gosub,GetNextProfile
 	
 	if (profileNext = profile0) {
-		currentTimer := 2000
+		currentTimer := minTimer
 	} else {
-		currentTimer := 4000
+		currentTimer := maxTimer
 	}
 	
 	; prevent rapid profile switching (eg. 60 times a second) which could lead to gpu damage
 	if (profileNext != profileCurrent) {
-		while (A_TickCount - profileTimestamp < 1000) {
+		while (A_TickCount - profileTimestamp < minTimer) {
 			sleep,200
 		}
 		
@@ -210,12 +226,12 @@ loop {
 			exitapp
 		}
 		
-		; ; FOR TESTING, to avoid GPU accident (to use real code uncomment above^):
-		; if (profileNext = profile0) {
-			; soundplay,*16
-		; } else {
-			; soundplay,*-1
-		; }
+		; FOR TESTING, to avoid GPU accident (to use real code uncomment above^):
+		if (profileNext = profile0) {
+			soundplay,*16
+		} else {
+			soundplay,*-1
+		}
 		
 		profileTimestamp := A_TickCount
 		profileCurrent := profileNext
@@ -230,11 +246,7 @@ loop {
 ; funcs & subs
 
 
-SetProfile() {
-
-	global status_wl_proc, status_bl_proc, status_wl_win, status_bl_win, status_fullscreen, forcefullscreen
-	global whitelistprocArr, blacklistprocArr
-	global profile0, profile1
+GetNextProfile:
 
 	status_wl_proc := ProcessExistFromList(whitelistprocArr)
 	status_bl_proc := ProcessExistFromList(blacklistprocArr)
@@ -245,6 +257,8 @@ SetProfile() {
 		} else {
 			profileNext := profile1
 		}
+	} else if (status_bl_proc) {
+		profileNext := profile0
 	}
 	
 	if !(status_wl_proc || status_bl_proc) {
@@ -294,9 +308,7 @@ SetProfile() {
 		}
 	}
 	
-	return profileNext
-	
-}
+return
 
 
 IsSessionFullscreen() {
@@ -360,8 +372,8 @@ ExitSub:
 			msgbox,% "ERROR DURING SCRIPT EXIT: Error while calling """ ODNTPath "\OverdriveNTool.exe -p0" profile0 """`n`nWIN32 error code: " A_LastError "`n`nCould not apply default profile. For now, you may need to manually apply a profile from within Radeon settings/WattMan or OverDriveNTool."
 		}
 		
-		; ; FOR TESTING:
-		; profileNext := profile0
-		; soundplay,*16
+		; FOR TESTING:
+		profileNext := profile0
+		soundplay,*16
 	}
 exitapp
