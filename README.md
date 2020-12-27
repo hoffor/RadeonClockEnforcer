@@ -3,7 +3,7 @@ View "releases" for executable download and instructions.
 
 RadeonClockEnforcer is a single AutoHotkey script that forces maximum clocks while important applications are open. Automates OverdriveNTool's clock/voltage switching functionality for GPU and VRAM, with the purpose of enforcing maximum clocks while whitelisted applications are in focus. 
 
-Please view RadeonClockEnforcer_example.png to know how to configure OverDriveNTool before running RadeonClockEnforcer.exe!
+Please view OverDriveNTool_example.png to know how to configure OverDriveNTool before running RadeonClockEnforcer.exe!
 
 Additionally, read the OverDriveNTool docs to at least get an understanding of what you're doing: https://forums.guru3d.com/threads/overdriventool-tool-for-amd-gpus.416116/
 
