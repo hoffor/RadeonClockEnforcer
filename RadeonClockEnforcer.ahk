@@ -1,6 +1,6 @@
 /*
 
-v1.0.0 - Written with AutoHotKey_L v1.1.33.02
+v1.0.1 - Written with AutoHotKey_L v1.1.33.02
 
 RadeonClockEnforcer by: https://github.com/hoffr/
 Requires OverdriveNTool by: https://forums.guru3d.com/threads/overdriventool-tool-for-amd-gpus.416116/
@@ -182,7 +182,7 @@ if (ErrorLevel != 0) {
 	msgbox,% "Error while calling """ ODNTPath "\OverdriveNTool.exe -p0" profile0 """`n`nWIN32 error code: " A_LastError "`n`nExiting"
 	exitapp
 }
-soundplay,*16 ; FOR TESTING
+; soundplay,*16 ; FOR TESTING
 
 
 profileTimestamp := A_TickCount
@@ -226,12 +226,12 @@ loop {
 			exitapp
 		}
 		
-		; FOR TESTING, to avoid GPU accident (to use real code uncomment above^):
-		if (profileNext = profile0) {
-			soundplay,*16
-		} else {
-			soundplay,*-1
-		}
+		; ; FOR TESTING, to avoid GPU accident (to use real code uncomment above^):
+		; if (profileNext = profile0) {
+			; soundplay,*16
+		; } else {
+			; soundplay,*-1
+		; }
 		
 		profileTimestamp := A_TickCount
 		profileCurrent := profileNext
@@ -372,8 +372,8 @@ ExitSub:
 			msgbox,% "ERROR DURING SCRIPT EXIT: Error while calling """ ODNTPath "\OverdriveNTool.exe -p0" profile0 """`n`nWIN32 error code: " A_LastError "`n`nCould not apply default profile. For now, you may need to manually apply a profile from within Radeon settings/WattMan or OverDriveNTool."
 		}
 		
-		; FOR TESTING:
-		profileNext := profile0
-		soundplay,*16
+		; ; FOR TESTING:
+		; profileNext := profile0
+		; soundplay,*16
 	}
 exitapp
