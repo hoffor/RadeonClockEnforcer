@@ -236,7 +236,6 @@ loop {
 		ApplyProfile(prof_0rpm)
 		sleep,750
 		ApplyProfile(prof_min)
-		soundplay,*-1
 		profileTimestamp := A_TickCount
 		sleep,750
 	}
