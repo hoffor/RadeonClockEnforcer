@@ -1,6 +1,6 @@
 /*
 
-v1.2.0 - Written with AutoHotKey_L v1.1.33.02
+v1.2.1 - Written with AutoHotKey_L v1.1.33.02
 
 RadeonClockEnforcer by: https://github.com/hoffr/
 Requires OverdriveNTool by: https://forums.guru3d.com/threads/overdriventool-tool-for-amd-gpus.416116/
@@ -172,6 +172,8 @@ if (!InStr(relevantFileContents,"_0RPM_ON_DONTMODIFY")) {
 			relevantFileContents := StrReplace(relevantFileContents,"Fan_ZeroRPM=0","Fan_ZeroRPM=1")
 			FileAppend,% relevantFileContents "`n`n",% ODNTPath "\OverDriveNTool.ini",UTF-16
 			our0rpmProfExists := 1
+		} else { ; if prof_min has 0rpm enabled
+			our0rpmProfExists := 0 ; don't need to create or use 0rpm_on profile
 		}
 	}
 } else {
@@ -180,7 +182,9 @@ if (!InStr(relevantFileContents,"_0RPM_ON_DONTMODIFY")) {
 
 prof_0rpm := prof_min . "_0RPM_ON_DONTMODIFY"
 
-ApplyProfile(prof_0rpm)
+if (our0rpmProfExists = 1) {
+	ApplyProfile(prof_0rpm)
+}
 
 sleep,750
 
